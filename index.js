@@ -23,7 +23,7 @@ app.get('/', async (req, res) => {
 
 app.get('/carbrands', (req, res) => {
 
-  db.all("SELECT DISTINCT MIN(ID) AS ID, Automarke FROM SzenenLinks GROUP BY Automarke", (err, rows) => {
+  db.all("SELECT DISTINCT Automarke FROM SzenenLinks", (err, rows) => {
     if (err) {
       console.log("Couldn't select carbrands from database!");
     }
@@ -33,8 +33,8 @@ app.get('/carbrands', (req, res) => {
 });
 
 app.post('/models', async (req, res) => {
-  console.log("bin drin");
-  db.all("SELECT Model FROM SzenenLinks WHERE Automarke = ?", [req.body.carbrand], (err, rows) => {
+  console.log("Server received car brand (" + req.body.carbrand + ")");
+  db.all("SELECT Model FROM SzenenLinks WHERE Automarke LIKE ?", [req.body.carbrand], (err, rows) => {
     if(err){
       console.log("Couldn't select models from database!");
     }

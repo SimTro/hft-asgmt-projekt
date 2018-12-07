@@ -1,10 +1,3 @@
-// THIS IS FOR AUTOMATED TESTING
-if (typeof module !== 'undefined') {
-  global.$ = require('jquery')
-
-}
-// END
-
 let carbrands = null;
 let models = null;
 
@@ -40,7 +33,6 @@ function toggleSubmit(disable) {
 async function getData() {
 
   try {
-
     const response = await fetch("/carbrands", {
       method: "GET", // *GET, POST, PUT, DELETE, etc.
       headers: { "Content-Type": "application/json" }
@@ -54,7 +46,7 @@ async function getData() {
       console.log(row.Automarke);
       carbrands.append(option);
     });
-
+    showModels( carbrands.find(":selected").text() );
   } catch (err) {
     console.log(err.name + ":" + err.message);
   }
@@ -70,7 +62,6 @@ async function getCarScene(carbrand, model) {
     headers: {
       "Content-Type": "application/json",
     },
-
     body: JSON.stringify(data),
   });
   const url = await response.text();
@@ -107,12 +98,4 @@ async function showModels(carbrand) {
     console.log(err.name + ": What went wrong? - " + err.message);
   }
 
-}
-
-// THIS IS FOR AUTOMATED TESTING
-if (typeof module !== 'undefined') {
-  module.exports = {
-    getData,
-    saveData
-  }
 }
