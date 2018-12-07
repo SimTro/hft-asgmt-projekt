@@ -1,7 +1,7 @@
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const bodyParser = require('body-parser')
-const db = new sqlite3.Database('./db/data2.db', (err) => {
+const db = new sqlite3.Database('./db/data.db', (err) => {
   if (err) {
     console.err("Couldn't load database!");
   }
