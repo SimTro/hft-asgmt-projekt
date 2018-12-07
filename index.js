@@ -18,7 +18,8 @@ app.use(bodyParser.json());
 app.use('/public', express.static(process.cwd() + '/public'));
 
 app.get('/', async (req, res) => {
-  res.render('pages/index')
+  res.render('pages/index');
+  res.send('pages/testpage');
 });
 
 app.get('/carbrands', (req, res) => {

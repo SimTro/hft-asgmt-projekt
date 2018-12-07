@@ -64,13 +64,33 @@ async function getCarScene(carbrand, model) {
     },
     body: JSON.stringify(data),
   });
-  const url = await response.json();
+  const path = await response.json();
 
-  if (!response.ok) {
-    console.error('Fehler weil respone not ok');
-  } else {
-    window.open(url.text);
+  loadIframe(path.text);
+}
+
+function loadIframe(path) {
+  console.log(path);
+  window.location = path;
+
+  // Or we use an iframe
+  //$('#iframe_scene').attr('src',path);
+
+  // Just inspiration on how to load the 3d-Scene
+  /*   Depends on your specific situation, but if the iframe can be deployed after the rest of the page's loading, you can simply use a query string, a la:
+
+  <iframe src="some_page.html?somedata=5&more=bacon"></iframe>
+  And then somewhere in some_page.html:
+
+  <script>
+  var params = location.href.split('?')[1].split('&');
+  data = {};
+  for (x in params)
+  {
+  data[params[x].split('=')[0]] = params[x].split('=')[1];
   }
+  </script> */
+
 }
 
 async function showModels(carbrand) {
