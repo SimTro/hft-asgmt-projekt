@@ -23,22 +23,25 @@ app.get('/', async (req, res) => {
 
 app.get('/carbrands', (req, res) => {
 
-  db.all("SELECT DISTINCT * FROM SzenenLinks", [], (err, rows) => {
+  db.all("SELECT DISTINCT MIN(ID) AS ID, Automarke FROM SzenenLinks GROUP BY Automarke", (err, rows) => {
     if (err) {
-      console.log("Couldn't select carbrands from database!")
+      console.log("Couldn't select carbrands from database!");
     }
     console.log("Got carbrands from database.");
-    rows.forEach(row => {
-      console.log(row.SzenenLink);
-    })
-
     res.json(rows);
   });
 });
 
-app.get('/models', (req, res) => {
-
-  
+app.post('/models', async (req, res) => {
+  console.log("bin drin");
+  db.all("SELECT Model FROM SzenenLinks WHERE Automarke = ?", [req.body.carbrand], (err, rows) => {
+    if(err){
+      console.log("Couldn't select models from database!");
+    }
+    console.log("Got models from database.");
+    rows.forEach( row => console.log(row.Model));
+    res.json(rows);
+  });
 });
 
 app.post('/carScene', async (req, res) => {
