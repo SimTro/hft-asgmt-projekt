@@ -5,63 +5,61 @@ if (typeof module !== 'undefined') {
 }
 // END
 
-$( document ).ready((() => {
+$(document).ready((() => {
 
   console.log('DOM is ready!')
-  
+
   getData(); // TODO: Implement getData Method
 
   const carbrands = $('#select_carbrand');
   const models = $('#select_model')
-  $('#hft-shoutbox-form').on('keyup', (event) => {
-  // TODO send selectet carbrand to server and wait for response
-  // when server sends use a list of models add them to dropdowne menü "model"
-  })
+
+  $('#form_search').on('keyup', async (event) => {
+    // TODO send selectet carbrand to server and wait for response
+    // when server sends use a list of models add them to dropdowne menü "model"
+    console.log("KEYUP EVENT");
+    try {
+      const response = await fetch('/models', {
+        method: "GET",
+        body: carbrands.options[carbrands.selectedIndex].text
+      });
+    } catch (err) {
+      console.log(err.name + ":" + err.message);
+    }
+    console.log("WOOORKING");
+
+  });
 
   $('#form_search').on('submit', async (event) => {
     event.preventDefault();
-    await getCarScene(carbrand.options[carbrand.selectedIndex].text, model.options[model.selectedIndex].text);
+    await getCarScene(carbrands.options[carbrands.selectedIndex].text, models.options[models.selectedIndex].text);
   })
 }))
 
-function formElementIsValid(element, minLength) {
-  return element.length >= minLength
-}
-
-function toggleAlertBox(show) {
-  const alertEl = $('#hft-shoutbox-alert')
-
-  if (show) {
-    alertEl.removeClass('d-none')
-  } else {
-    alertEl.addClass('d-none')
-  }
-}
-
 function toggleSubmit(disable) {
-  const submitButton = $('#hft-shoutbox-form-submit')
-  submitButton.prop('disabled', disable)
+  const submitButton = $('#button_search');
+  submitButton.prop('disabled', disable);
 }
 
 async function getData() {
-  
-  try{
-   
+
+  try {
+
     const response = await fetch("/carbrands", {
       method: "GET", // *GET, POST, PUT, DELETE, etc.
-      headers: {"Content-Type": "application/json"}
-     });
+      headers: { "Content-Type": "application/json" }
+    });
     const json = await response.json();
 
     var carbrands = document.getElementById("select_carbrand");
-    json.forEach( row => {
+    json.forEach(row => {
       var option = document.createElement('option');
       option.text = row.Automarke;
-      console.log(row.Automarke)
+      console.log(row.Automarke);
       carbrands.add(option);
     });
 
-  } catch (err){  
+  } catch (err) {
     console.log(err.name + ":" + err.message);
   }
 }
@@ -69,22 +67,22 @@ async function getData() {
 
 async function getCarScene(carbrand, model) {
 
-  var data = {"carbrand":carbrand, "model":model};
+  var data = { "carbrand": carbrand, "model": model };
 
-    const response = await fetch("/carScene", {
-      method: "POST", // *GET, POST, PUT, DELETE, etc.
-      headers: {
-          "Content-Type": "application/json",
-      },
+  const response = await fetch("/carScene", {
+    method: "POST", // *GET, POST, PUT, DELETE, etc.
+    headers: {
+      "Content-Type": "application/json",
+    },
 
-      body: JSON.stringify(data),
+    body: JSON.stringify(data),
   });
-    const url = await response.text();
-   
-    if(!response.ok){
-      console.error('Fehler weil respone not ok');
-    }else {
- window.open(url, "_blank");
+  const url = await response.text();
+
+  if (!response.ok) {
+    console.error('Fehler weil respone not ok');
+  } else {
+    window.open(url, "_blank");
   }
 }
 
