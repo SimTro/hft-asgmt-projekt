@@ -23,7 +23,7 @@ app.get('/', async (req, res) => {
 
 app.get('/carbrands', (req, res) => {
 
-  db.all("SELECT DISTINCT Automarke FROM SzenenLinks", (err, rows) => {
+  db.all("SELECT DISTINCT carbrand FROM scene_links", (err, rows) => {
     if (err) {
       console.log("Couldn't select carbrands from database!");
     }
@@ -34,7 +34,7 @@ app.get('/carbrands', (req, res) => {
 
 app.post('/models', async (req, res) => {
   console.log("Server received car brand (" + req.body.carbrand + ")");
-  db.all("SELECT Model FROM SzenenLinks WHERE Automarke LIKE ?", [req.body.carbrand], (err, rows) => {
+  db.all("SELECT model FROM scene_links WHERE carbrand LIKE ?", [req.body.carbrand], (err, rows) => {
     if(err){
       console.log("Couldn't select models from database!");
     }
@@ -46,7 +46,7 @@ app.post('/models', async (req, res) => {
 
 app.post('/carScene', async (req, res) => {
   //get Scene Link from Database and give it back with response
-  db.get("SELECT SzenenLink link FROM SzenenLinks WHERE Automarke = ? AND Model = ?;", [req.body.carbrand, req.body.model], (err, row) => {
+  db.get("SELECT scene_link link FROM scene_links WHERE carbrand = ? AND model = ?;", [req.body.carbrand, req.body.model], (err, row) => {
     if (err) {
       throw err;
     }

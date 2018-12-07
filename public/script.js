@@ -42,8 +42,8 @@ async function getData() {
 
     carbrandsJSON.forEach(row => {
       var option = document.createElement('option');
-      option.text = row.Automarke;
-      console.log(row.Automarke);
+      option.text = row.carbrand;
+      console.log(row.carbrand);
       carbrands.append(option);
     });
     showModels( carbrands.find(":selected").text() );
@@ -90,8 +90,8 @@ async function showModels(carbrand) {
     models.empty();
     modelsJSON.forEach(row => {
       var option = document.createElement('option');
-      option.text = row.Model;
-      console.log(row.Model);
+      option.text = row.model;
+      console.log(row.model);
       models.append(option);
     })
   } catch (err) {
