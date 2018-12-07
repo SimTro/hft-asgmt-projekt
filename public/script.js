@@ -64,12 +64,12 @@ async function getCarScene(carbrand, model) {
     },
     body: JSON.stringify(data),
   });
-  const url = await response.text();
+  const url = await response.json();
 
   if (!response.ok) {
     console.error('Fehler weil respone not ok');
   } else {
-    window.open(url, "_blank");
+    window.open(url.text);
   }
 }
 

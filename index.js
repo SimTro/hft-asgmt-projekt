@@ -39,7 +39,7 @@ app.post('/models', async (req, res) => {
       console.log("Couldn't select models from database!");
     }
     console.log("Got models from database.");
-    rows.forEach( row => console.log(row.Model));
+    rows.forEach( row => console.log(row.model));
     res.json(rows);
   });
 });
@@ -50,7 +50,8 @@ app.post('/carScene', async (req, res) => {
     if (err) {
       throw err;
     }
-    res.text(row.link);
+    console.log("carScene link: " + row.link);
+    res.json({ "text": row.link });
   });
 });
 
