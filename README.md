@@ -2,6 +2,6 @@
 
 ## TODO
   - [x] create database tables
-  - [ ] design start page (./views/pages/index.ejs)
-  - [ ] 
+  - [x] make start page work
+  - [ ] design start page using bootstrap (./views/pages/index.ejs)
   - [ ] 
