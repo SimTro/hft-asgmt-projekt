@@ -2,3 +2,7 @@
   margin-top: 1rem;
   margin-bottom: 1.5rem;
 }
+
+/*@media only screen and (max-width: 479px){
+    #container2 { width: 90%; }
+}*/
