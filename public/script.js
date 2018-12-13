@@ -1,103 +1,108 @@
-// THIS IS FOR AUTOMATED TESTING
-if (typeof module !== 'undefined') {
-  global.$ = require('jquery')
+// Pre-initialize variables, so that we can use them in all functions
 
-}
-// END
+let carbrands = null;
+let models = null;
 
-$( document ).ready((() => {
+
+//// as soon as DOM (Document Object Model) is loaded, do this:
+
+
+$(document).ready((() => {
 
   console.log('DOM is ready!')
-  
-  getData(); // TODO: Implement getData Method
 
-  const carbrands = $('#select_carbrand');
-  const models = $('#select_model')
-  $('#hft-shoutbox-form').on('keyup', (event) => {
-  // TODO send selectet carbrand to server and wait for response
-  // when server sends use a list of models add them to dropdowne menü "model"
-  })
+  carbrands = $('#select_carbrand'); // carbrand dropdown
+  models = $('#select_model'); // model dropdown
+
+  // get carbrands and add them to dropdown menu
+
+  getData(); 
+
+  // listen for change in carbrand dropdown and show models for selected carbrand
+
+  $('#select_carbrand').on('change', async (event) => {
+    event.preventDefault();
+    showModels( carbrands.find(":selected").text() );
+  });
+
+  // listen for submit event on form (when button is pressed)
 
   $('#form_search').on('submit', async (event) => {
     event.preventDefault();
-    await getCarScene(carbrand.options[carbrand.selectedIndex].text, model.options[model.selectedIndex].text);
+    await getCarScene(carbrands.find(":selected").text(), models.find(":selected").text());
   })
 }))
 
-function formElementIsValid(element, minLength) {
-  return element.length >= minLength
-}
 
-function toggleAlertBox(show) {
-  const alertEl = $('#hft-shoutbox-alert')
+//// functions are definded below this line
 
-  if (show) {
-    alertEl.removeClass('d-none')
-  } else {
-    alertEl.addClass('d-none')
+
+async function getData() {
+  try {
+    const response = await fetch("/carbrands", {
+      method: "GET", // *GET, POST, PUT, DELETE, etc.
+      headers: { "Content-Type": "application/json" }
+    });
+    console.log("I (hopefully) got the following Carbrands: ");
+    const carbrandsJSON = await response.json();
+
+    carbrandsJSON.forEach(row => {
+      var option = document.createElement('option');
+      option.text = row.carbrand;
+      console.log(row.carbrand);
+      carbrands.append(option);
+    });
+    showModels( carbrands.find(":selected").text() );
+  } catch (err) {
+    console.log(err.name + ":" + err.message);
   }
 }
 
-function toggleSubmit(disable) {
-  const submitButton = $('#hft-shoutbox-form-submit')
-  submitButton.prop('disabled', disable)
-}
 
-async function getData() {
+async function showModels(carbrand) {
+  // send selectet carbrand to server and wait for response
+  // as soon as server sends us a list of models, add them to dropdown menu "model"
+  console.log("Sending carbrand (" + carbrand + ") to server to get models...")
   
-  try{
-   
-    const response = await fetch("/carbrands", {
-      method: "GET", // *GET, POST, PUT, DELETE, etc.
-      headers: {"Content-Type": "application/json"}
-     });
-    const json = await response.json();
-
-    var carbrands = document.getElementById("select_carbrand");
-    json.forEach( row => {
-      var option = document.createElement('option');
-      option.text = row.Automarke;
-      carbrands.add(option);
+  var data = { "carbrand": carbrand };
+  
+  try {
+    const response = await fetch('/models', {
+      method: "POST",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
     });
+    const modelsJSON = await response.json();
+    
+    console.log("I (hopefully) got the following Models: ");
+    
+    models.empty(); // remove previous models from dropdown 
 
-    var model = document.getElementById("select_model");
-    json.forEach( row => {
+    modelsJSON.forEach(row => {
+      console.log(row.model);
+      
       var option = document.createElement('option');
-      option.text = row.Model;
-      model.add(option);
-    });
-
-  } catch (err){  
-    console.log(err.name + ":" + err.message);
+      option.text = row.model;
+      models.append(option);
+    })
+  } catch (err) {
+    console.log(err.name + ": " + err.message);
   }
 }
 
 
 async function getCarScene(carbrand, model) {
 
-  var data = {"carbrand":carbrand, "model":model};
+  var data = { "carbrand": carbrand, "model": model };
 
-    const response = await fetch("/carScene", {
-      method: "POST", // *GET, POST, PUT, DELETE, etc.
-      headers: {
-          "Content-Type": "application/json",
-      },
-
-      body: JSON.stringify(data),
+  const response = await fetch("/carScene", {
+    method: "POST", // *GET, POST, PUT, DELETE, etc.
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
   });
-    const url = await response.text();
-   
-    if(!response.ok){
-      console.error('Fehler weil respone not ok');
-    }else {
- window.open(url, "_blank");
-  }
-}
+  const carSceneJSON = await response.json();
 
-// THIS IS FOR AUTOMATED TESTING
-if (typeof module !== 'undefined') {
-  module.exports = {
-    getData,
-    saveData
-  }
+  $('#iframe_scene').attr('src', carSceneJSON.path);
 }
