@@ -57,8 +57,14 @@ async function getData() {
     json.forEach( row => {
       var option = document.createElement('option');
       option.text = row.Automarke;
-      console.log(row.Automarke)
       carbrands.add(option);
+    });
+
+    var model = document.getElementById("select_model");
+    json.forEach( row => {
+      var option = document.createElement('option');
+      option.text = row.Model;
+      model.add(option);
     });
 
   } catch (err){  
