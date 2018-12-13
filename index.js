@@ -32,9 +32,21 @@ app.get('/', async (req, res) => {
   res.render('pages/index');
 });
 
+app.get('/linkVorschlag', async (req, res) => {
+  res.render('pages/linkVorschlag');
+});
+
+app.get('/impressum', async (req, res) => {
+  res.render('pages/impressum');
+});
+
+app.get('/admin', async (req, res) => {
+  res.render('pages/admin');
+});
+
 
 app.get('/carbrands', (req, res) => {
-  db.all("SELECT DISTINCT carbrand FROM scene_links", (err, rows) => {
+  db.all("SELECT DISTINCT carbrand FROM scene_links ORDER BY carbrand", (err, rows) => {
     if (err) {
       console.log("Couldn't select carbrands from database!");
     }
@@ -46,7 +58,7 @@ app.get('/carbrands', (req, res) => {
 
 app.post('/models', async (req, res) => {
   console.log("Server received car brand (" + req.body.carbrand + ")");
-  db.all("SELECT model FROM scene_links WHERE carbrand LIKE ?", [req.body.carbrand], (err, rows) => {
+  db.all("SELECT model FROM scene_links WHERE carbrand LIKE ? ORDER BY model", [req.body.carbrand], (err, rows) => {
     if(err){
       console.log("Couldn't select models from database!");
     }
