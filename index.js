@@ -85,7 +85,22 @@ app.post('/carScene', async (req, res) => {
 // GET-Routes for carScenes
 
 app.get('/car_scenes/car_scene_TEST_01', async (req, res) => {
-  res.render("car_scenes/car_scene_TEST_01");
+  db.all("SELECT link,category FROM links WHERE model=? AND carbrand=? AND approved=1 ORDER BY link", ["Mini", "Rover"], (err, rows) => {
+    if(err){
+      console.log("Couldn't select links from database!");
+      console.log(err);
+      return;
+    }
+    console.log("I got the following links: ");
+    rows.forEach( row => console.log(row.link));
+    console.log("Got links from database.");
+    res.render("./car_scenes/car_scene_TEST_01", {
+      links_Motor: rows.filter( row => row.category == "Motor"),
+      links_Rad: rows.filter( row => row.category == "Rad"),
+      links_Lampe: rows.filter( row => row.category == "Lampe"),
+      links_Innenraum: rows.filter( row => row.category == "Innenraum"),
+    });
+  });
 });
 
 
