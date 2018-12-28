@@ -136,6 +136,6 @@ async function getLogin(username, passwort) {
   const loginJSONlink = loginJSON.link;
   
   await console.log("Login link script.js: " + loginJSON);
-  window.location.href= lloginJSONlink ;
+  window.location.href= loginJSONlink ;
   
 }
