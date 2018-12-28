@@ -15,7 +15,12 @@
         <a class="nav-link" href="/impressum">Impressum<span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item <%= active === 'index' ? 'active' : undefined  %>">
+          <form id="form_login" method="post" action="/suche">
         <a class="nav-link" href="/admin">Admin<span class="sr-only">(current)</span></a>
+        <input type="text" name="loginname" id="loginname" class="input-text" placeholder="Benutzername">
+        <input type="password" name="login[password]" id="password" class="input-text" placeholder="Passwort">
+        <button type="submit" id= "loginbutten" class="button btn-login">Login</button>
+      </form>
       </li>
     </ul>
   </div>

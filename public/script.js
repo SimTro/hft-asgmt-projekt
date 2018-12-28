@@ -2,6 +2,8 @@
 
 let carbrands = null;
 let models = null;
+let usernames = null;
+let passworts = null;
 
 
 //// as soon as DOM (Document Object Model) is loaded, do this:
@@ -30,6 +32,15 @@ $(document).ready((() => {
   $('#form_search').on('submit', async (event) => {
     event.preventDefault();
     await getCarScene(carbrands.find(":selected").text(), models.find(":selected").text());
+  })
+
+  $('#form_login').on('submit', async (event) => {
+    event.preventDefault();
+    var usernames = document.querySelector("#loginname").value; 
+    var passworts = document.querySelector("#password").value;
+    console.log(usernames);
+    console.log(passworts);
+    await getLogin(usernames,passworts);
   })
 }))
 
@@ -92,7 +103,6 @@ async function showModels(carbrand) {
 
 
 async function getCarScene(carbrand, model) {
-
   var data = { "carbrand": carbrand, "model": model };
 
   const response = await fetch("/carScene", {
@@ -105,4 +115,27 @@ async function getCarScene(carbrand, model) {
   const carSceneJSON = await response.json();
 
   $('#iframe_scene').attr('src', carSceneJSON.path);
+}
+
+
+// passwort sending and anser
+async function getLogin(username, passwort) {
+
+  console.log("I (hopefully) got the following Passwort: ");
+
+  var data = { "username": username, "passwort": passwort};
+
+  const response = await fetch("/login", {
+    method: "POST", // *GET, POST, PUT, DELETE, etc.
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  const loginJSON = await response.json();
+  const loginJSONlink = loginJSON.link;
+  
+  await console.log("Login link script.js: " + loginJSON);
+  window.location.href= lloginJSONlink ;
+  
 }

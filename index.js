@@ -44,7 +44,6 @@ app.get('/admin', async (req, res) => {
   res.render('pages/admin');
 });
 
-
 app.get('/carbrands', (req, res) => {
   db.all("SELECT DISTINCT carbrand FROM scene_links ORDER BY carbrand", (err, rows) => {
     if (err) {
@@ -112,3 +111,24 @@ const server = app.listen(port, () => {
 });
 
 module.exports = server
+
+// Passwort request
+app.post('/login', async (req, res) => {
+  //get Login_Link from Database and give it back with respons
+
+  db.get("SELECT link FROM login WHERE username = ? AND passwort = ?" , [req.body.username, req.body.passwort], (err, row) => {
+    if (err) {
+    throw err;
+   }
+   
+   if(typeof row.link === "undefined"){
+     console.log("Falscher Eintrag" );
+     
+   }else{
+    console.log("Link index.js: " + row.link);
+   console.log("Passwort index.js path: " + row.link);
+   res.json({ "link": row.link });
+   }
+  });
+
+});
