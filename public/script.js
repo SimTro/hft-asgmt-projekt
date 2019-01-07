@@ -115,8 +115,20 @@ async function getCarScene(carbrand, model) {
     body: JSON.stringify(data),
   });
   const carSceneJSON = await response.json();
-
-  $('#iframe_scene').attr('src', carSceneJSON.path);
+  
+  // load scene in iframe 
+  // if first time loading show some info about controls
+  if($('#iframe_scene').attr('src') == ""){
+    $('#iframe_scene').attr('src', carSceneJSON.path); 
+    $('#info_controls').removeClass('d-none');
+    $('#info_controls').append("<div class=\"row justify-content-center\">&#8592; &#8594; Ansicht mit Pfeiltasten rotieren</div>");
+    setTimeout(function(){ $('#info_controls').append("<br><br><div class=\"row justify-content-center\">&#9757; &#9757; Doppelklick auf gewünschten Bereich</div>");
+      setTimeout(function(){ $('#info_controls').append("<br><br><div class=\"row justify-content-center\">&#9757; Klick auf Schrift zeigt Auswahl</div>"); 
+        setTimeout(function(){ $('#info_controls').addClass('d-none'); $('#info_controls').empty(); $('#iframe_scene').removeClass('d-none'); $('#iframe_scene').focus(); }, 4000);}, 1200);}, 1200);
+  } else {
+    $('#iframe_scene').attr('src', carSceneJSON.path);
+    $('#iframe_scene').removeClass('d-none');
+  }
 }
 
 
