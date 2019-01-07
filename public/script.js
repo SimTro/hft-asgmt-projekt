@@ -4,6 +4,7 @@ let carbrands = null;
 let models = null;
 let usernames = null;
 let passworts = null;
+let logid = null;
 
 
 //// as soon as DOM (Document Object Model) is loaded, do this:
@@ -13,13 +14,14 @@ $(document).ready((() => {
 
   console.log('DOM is ready!')
 
+
   carbrands = $('#select_carbrand'); // carbrand dropdown
   models = $('#select_model'); // model dropdown
 
   // get carbrands and add them to dropdown menu
-
+  
   getData(); 
-
+  
   // listen for change in carbrand dropdown and show models for selected carbrand
 
   $('#select_carbrand').on('change', async (event) => {
@@ -35,11 +37,11 @@ $(document).ready((() => {
   })
 
   $('#form_login').on('submit', async (event) => {
+    
     event.preventDefault();
     var usernames = document.querySelector("#loginname").value; 
     var passworts = document.querySelector("#password").value;
-    console.log(usernames);
-    console.log(passworts);
+   
     await getLogin(usernames,passworts);
   })
 }))
@@ -132,10 +134,47 @@ async function getLogin(username, passwort) {
     },
     body: JSON.stringify(data),
   });
-  const loginJSON = await response.json();
-  const loginJSONlink = loginJSON.link;
+  const rowJSON = await response.json();
   
-  await console.log("Login link script.js: " + loginJSON);
-  window.location.href= loginJSONlink ;
+  const rowJSONlink = rowJSON.row.link;
+  console.log(rowJSONlink);
+  if(rowJSONlink == undefined) return;
   
+  window.location = rowJSONlink; 
+
+  //getAdminData();
+ 
+}
+
+async function getAdminData() {
+  console.log("Database 177")
+  
+    const response = await fetch("/admindata", {
+      method: "POST", // *GET, POST, PUT, DELETE, etc.
+      headers: {"Content-Type": "application/json",}
+    });
+  
+    const json = await response.json();
+    console.log("json.link");
+    if ($('#shouts').length == 0){
+      $('#shouts').append('<tbody></tbody>');
+      }
+      json.rows.forEach( shout => {
+      $('#shouts').append(`<tr> <td>${shout.link}</td><td>${shout.category}</td><td>${shout.model}</td> <td><button id="${shout.rowid}" onClick="delete_row(this.id)" class="btn btn-primary">Löschen</button></td></tr>`);
+      })
+ 
+}
+
+async function delete_row(clicked_id)
+{
+  console.log("Hallo")
+  var data = { "rowid": clicked_id};
+  const response = await fetch("/deleteRow", {
+    method: "POST", // *GET, POST, PUT, DELETE, etc.
+    headers: {"Content-Type": "application/json",},
+    body: JSON.stringify(data),
+  });
+  await response.json();
+  console.log("link mit id = " + clicked_id + "wurde entfernt!");
+  location.reload();
 }

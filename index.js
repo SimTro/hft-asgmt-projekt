@@ -40,8 +40,15 @@ app.get('/impressum', async (req, res) => {
   res.render('pages/impressum');
 });
 
-app.get('/admin', async (req, res) => {
-  res.render('pages/admin');
+app.get('/adminz3erhzwtfnwg74fzw3gjwzdgwjehfzg', async (req, res) => {
+  db.all("SELECT rowid, * FROM links WHERE approved = 1;", (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.render('pages/admin',{
+      myRows: rows
+    });
+  });
 });
 
 app.get('/carbrands', (req, res) => {
@@ -93,7 +100,7 @@ app.get('/car_scenes/car_scene_TEST_01', async (req, res) => {
     console.log("I got the following links: ");
     rows.forEach( row => console.log(row.link));
     console.log("Got links from database.");
-    res.render("./car_scenes/car_scene_TEST_01", {
+    res.render("./car_scenes/car_scene_TEST_01",{
       links_Motor: rows.filter( row => row.category == "Motor"),
       links_Rad: rows.filter( row => row.category == "Rad"),
       links_Lampe: rows.filter( row => row.category == "Lampe"),
@@ -115,20 +122,32 @@ module.exports = server
 // Passwort request
 app.post('/login', async (req, res) => {
   //get Login_Link from Database and give it back with respons
-
-  db.get("SELECT link FROM login WHERE username = ? AND passwort = ?" , [req.body.username, req.body.passwort], (err, row) => {
+    
+    db.get("SELECT link FROM login WHERE username = ? AND passwort = ?" , [req.body.username, req.body.passwort], (err, row) => {
     if (err) {
-    throw err;
-   }
-   
-   if(typeof row.link === "undefined"){
-     console.log("Falscher Eintrag" );
-     
-   }else{
-    console.log("Link index.js: " + row.link);
-   console.log("Passwort index.js path: " + row.link);
-   res.json({ "link": row.link });
-   }
+      throw err;
+     } 
+     res.json({ "row" : row});
   });
+});
 
+
+app.post('/admindata', async (req, res) => {
+  db.all("SELECT rowid, * FROM links WHERE approved = 1;", (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    console.log(rows);
+    res.json({"rows": rows });
+  });
+});
+
+app.post('/deleteRow', async (req, res) => {
+  console.log(req.body.rowid)
+  db.run("DELETE FROM links WHERE rowid=?;", [req.body.rowid], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({"Done": rows});
+  });
 });
