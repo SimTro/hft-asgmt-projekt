@@ -3,6 +3,7 @@
 let carbrands = null;
 let models = null;
 let categorys = null;
+let link = null;
 let usernames = null;
 let passworts = null;
 
@@ -18,6 +19,7 @@ $(document).ready((() => {
   carbrands = $('#select_carbrand'); // carbrand dropdown
   models = $('#select_model'); // model dropdown
   categorys = $('#select_category');
+  link = $("#link_suggestion");
 
   // get carbrands and add them to dropdown menu
   
@@ -42,6 +44,13 @@ $(document).ready((() => {
   $('#form_search').on('submit', async (event) => {
     event.preventDefault();
     await getCarScene(carbrands.find(":selected").text(), models.find(":selected").text());
+  })
+
+  //Suggest Link Form
+
+  $("#form_suggest").on("submit", async (event) => {
+    event.preventDefault();
+    await suggestLink(carbrands.find(":selected").text(), models.find(":selected").text(), categorys.find(":selected").text(), link.val() );
   })
 
   $('#form_login').on('submit', async (event) => {
@@ -112,8 +121,6 @@ async function showModels(carbrand) {
 }
 
 async function showCategorys(carbrand, model) {
-  // send selectet carbrand to server and wait for response
-  // as soon as server sends us a list of models, add them to dropdown menu "model"
   console.log("Sending carbrand (" + carbrand + ") and model (" + model + ") to server to get models...")
   
   var data = { "carbrand": carbrand, "model": model };
@@ -140,6 +147,20 @@ async function showCategorys(carbrand, model) {
   } catch (err) {
     console.log(err.name + ": " + err.message);
   }
+}
+
+//suggest function
+
+async function suggestLink(carbrand, model, category, link) {
+  var data = {"carbrand" : carbrand, "model" : model, "category" : category, "link" : link};
+  console.log("Brand: " + carbrand + " model: " + model + " category: " + category + link);
+
+  const response = await fetch("/suggest", {
+    method: "POST",
+    headers: { 'Content-Type': 'application/json'},
+    body: JSON.stringify(data)
+  });
+
 }
 
 async function getCarScene(carbrand, model) {
