@@ -133,6 +133,19 @@ const server = app.listen(port, () => {
 
 module.exports = server
 
+//Insert Suggested Links
+app.post("/suggest", async (req, res) => {
+  console.log("New Link Suggestion");
+  db.run("INSERT INTO links(carbrand, model, category, link, approved) VALUES (?, ?, ?, ?, ?);", 
+  [req.body.carbrand, req.body.model, req.body.category, req.body.link, "0"], function(err) {
+    if(err) {
+      console.log("suggestion error");
+    } else {
+      console.log("suggestion successful")
+    }
+  });
+});
+
 // Passwort request
 app.post('/login', async (req, res) => {
   //get Login_Link from Database and give it back with respons
@@ -155,6 +168,7 @@ app.post('/admindata', async (req, res) => {
     res.json({"rows": rows });
   });
 });
+
 // Delete Admin,
 app.post('/deleteRow', async (req, res) => {
   db.run("DELETE FROM links WHERE rowid=?;", [req.body.rowid], (err, rows) => {
