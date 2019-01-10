@@ -74,6 +74,19 @@ app.post('/models', async (req, res) => {
   });
 });
 
+// Post for categorys
+
+app.post('/categorys', async (req, res) => {
+  db.all("SELECT category FROM links WHERE carbrand = ? AND model = ?;", [req.body.carbrand, req.body.model], (err, rows) => {
+    if(err){
+      console.log("Couldn't select categorys from database!");
+    }
+    console.log("Got categorys from database.");
+    rows.forEach( row => console.log(row.category));
+    res.json(rows);
+  });
+});
+
 
 // Providing path for choosen carbrand and model
 

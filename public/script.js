@@ -2,6 +2,7 @@
 
 let carbrands = null;
 let models = null;
+let categorys = null;
 let usernames = null;
 let passworts = null;
 let logid = null;
@@ -17,6 +18,7 @@ $(document).ready((() => {
 
   carbrands = $('#select_carbrand'); // carbrand dropdown
   models = $('#select_model'); // model dropdown
+  categorys = $('#select_category');
 
   // get carbrands and add them to dropdown menu
   
@@ -27,6 +29,13 @@ $(document).ready((() => {
   $('#select_carbrand').on('change', async (event) => {
     event.preventDefault();
     showModels( carbrands.find(":selected").text() );
+  });
+
+  // listen for change in Model dropdown and show category for selected carbrand/model
+
+  $('#select_model').on('change', async (event) => {
+    event.preventDefault();
+    showCategorys(carbrands.find(":selected").text(), models.find(":selected").text());
   });
 
   // listen for submit event on form (when button is pressed)
@@ -103,6 +112,36 @@ async function showModels(carbrand) {
   }
 }
 
+async function showCategorys(carbrand, model) {
+  // send selectet carbrand to server and wait for response
+  // as soon as server sends us a list of models, add them to dropdown menu "model"
+  console.log("Sending carbrand (" + carbrand + ") and model (" + model + ") to server to get models...")
+  
+  var data = { "carbrand": carbrand, "model": model };
+  
+  try {
+    const response = await fetch('/categorys', {
+      method: "POST",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    const categoryJSON = await response.json();
+    
+    console.log("I (hopefully) got the following categorys: ");
+    
+    categorys.empty(); // remove previous categorys from dropdown 
+
+    categoryJSON.forEach(row => {
+      console.log(row.category);
+      
+      var option = document.createElement('option');
+      option.text = row.category;
+      categorys.append(option);
+    })
+  } catch (err) {
+    console.log(err.name + ": " + err.message);
+  }
+}
 
 async function getCarScene(carbrand, model) {
   var data = { "carbrand": carbrand, "model": model };
