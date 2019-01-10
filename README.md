@@ -16,9 +16,3 @@ Admin-Bereich (username, passwort) - Simon
 
 Link bestätigt: 1
 Link noch nicht bestätigt: 0
-
-## TODO
-  - [x] create database tables
-  - [x] make start page work
-  - [x] design start page using bootstrap (./views/pages/index.ejs)
-  - [ ] create different carScenes
