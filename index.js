@@ -41,14 +41,24 @@ app.get('/impressum', async (req, res) => {
 });
 
 app.get('/adminz3erhzwtfnwg74fzw3gjwzdgwjehfzg', async (req, res) => {
-  
-  db.all("SELECT rowid, * FROM links WHERE approved = 1;", (err, rows) => {
+  db.all("SELECT rowid, * FROM links WHERE approved = 0;",(err, rows) => {
     if (err) {
       throw err;
     }
     res.render('pages/admin',{
       myRows: rows
     });
+  });
+});
+
+app.post('/adminTable', async (req, res) => {
+  console.log("Server received para (" + req.body.para + ")");
+  db.all("SELECT DISTINCT rowid, * FROM links WHERE approved = ?;", [req.body.para], (err, rows) => {
+    if(err){
+      console.log("Couldn't select admin-links from database!");
+    }
+    console.log("Got admin-links from database.");
+    res.json(rows);
   });
 });
 
@@ -120,6 +130,8 @@ const server = app.listen(port, () => {
 
 module.exports = server
 
+
+// ******************************************************  ADMIN
 // Passwort request
 app.post('/login', async (req, res) => {
   //get Login_Link from Database and give it back with respons
@@ -132,16 +144,17 @@ app.post('/login', async (req, res) => {
   });
 });
 
-// Daten für Admin TAbelle
-app.post('/admindata', async (req, res) => {
-  db.all("SELECT rowid, * FROM links WHERE approved = 1;", (err, rows) => {
-    if (err) {
-      throw err;
-    }
+// Daten für Admin Table
+// app.post('/admindata', async (req, res) => {
+//   db.all("SELECT rowid, * FROM links WHERE approved = 1;", (err, rows) => {
+//     if (err) {
+//       throw err;
+//     }
     
-    res.json({"rows": rows });
-  });
-});
+//     res.json({"rows": rows });
+//   });
+// });
+
 // Delete Admin,
 app.post('/deleteRow', async (req, res) => {
   db.run("DELETE FROM links WHERE rowid=?;", [req.body.rowid], (err, rows) => {
@@ -154,8 +167,7 @@ app.post('/deleteRow', async (req, res) => {
 
 // publish Admin
 app.post('/saveRow', function(req, res){
-  console.log("set to 0")
-  db.run("UPDATE links SET approved = 0 WHERE rowid=?;", [req.body.rowid], function(err, row){
+  db.run("UPDATE links SET approved = 1 WHERE rowid=?;", [req.body.rowid], function(err, row){
     if (err){
         console.err(err);
         res.status(500);

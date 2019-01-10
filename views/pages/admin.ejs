@@ -19,11 +19,11 @@
     <%- include('../partials/nav', { active: 'index' }) %>
     <div class="container">
       
+ 
+      <button id ="publish_Links" onclick="gettabl_data(0)">Links Veröffentlichen</button>
+      <button id = "delete_Links" onclick="gettabl_data(1)">Vorhande Links Löschen</button>
+ 
 
-      <div class="header" id="myHeader">
-        <h2>My Header</h2>
-      </div> 
-      
       <br>
       
       <div class="row justify-content-center">
@@ -35,28 +35,7 @@
     </div>
 
     <table style="width:50%" id = "shouts" class="table table-striped">
-        <tr>
-          <th>Link</th>
-          <th>Kategorie</th>
-          <th>Automarke</th>
-          <th>Model</th>
-          <th>Veröffentlichen</th>
-          <th>Löschen</th>
-        </tr>
-        <% myRows.forEach( row => { %>
-          <tr> 
-            <td><%= row.link %></td>
-            <td><%= row.category %></td>
-            <td><%= row.carbrand %></td>
-            <td><%= row.model %></td>
-            <td><button id="<%= row.rowid %>" onClick="save_row(this.id)" class="btn btn-primary">Veröffentlichen</button></td>
-            <td><button id="<%= row.rowid %>" onClick="delete_row(this.id)" class="btn btn-primary">Löschen</button></td>
-          </tr>
-        <% }); %>
-        </tr>
-
       </table>
-      
 
   </body>
 </html>

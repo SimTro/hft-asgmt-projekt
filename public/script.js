@@ -4,6 +4,7 @@ let carbrands = null;
 let models = null;
 let usernames = null;
 let passworts = null;
+var admin_link= null;
 
 
 //// as soon as DOM (Document Object Model) is loaded, do this:
@@ -12,7 +13,6 @@ let passworts = null;
 $(document).ready((() => {
 
   console.log('DOM is ready!')
-
 
   carbrands = $('#select_carbrand'); // carbrand dropdown
   models = $('#select_model'); // model dropdown
@@ -35,8 +35,8 @@ $(document).ready((() => {
     await getCarScene(carbrands.find(":selected").text(), models.find(":selected").text());
   })
 
+  // Admin loggin
   $('#form_login').on('submit', async (event) => {
-    
     event.preventDefault();
     var usernames = document.querySelector("#loginname").value; 
     var passworts = document.querySelector("#password").value;
@@ -130,7 +130,7 @@ async function getCarScene(carbrand, model) {
   }
 }
 
-
+//////////// ********************************************** ADMIN ***********************************
 // passwort sending and anser
 async function getLogin(username, passwort) {
 
@@ -143,27 +143,26 @@ async function getLogin(username, passwort) {
     },
     body: JSON.stringify(data),
   });
+  
   const rowJSON = await response.json();
   const rowJSONlink = rowJSON.row.link;
   if(rowJSONlink == undefined) return;
-  
+  admin_link = rowJSONlink;
+  console.log("151 " + admin_link);
   window.location = rowJSONlink; 
-
- 
- 
+  console.log("153 " + admin_link);
 }
 // Daten für die Admin Tabelle aus db in Tabelle
-async function getAdminData() {
-    const response = await fetch("/admindata", {
-      method: "POST", // *GET, POST, PUT, DELETE, etc.
-      headers: {"Content-Type": "application/json",}
-    });
-  
-    const json = await response.json();
-    console.log("json.link");
-    if ($('#shouts').length == 0){
-      $('#shouts').append('<tbody></tbody>');
-      }
+// async function getAdminData() {
+//     const response = await fetch("/admindata", {
+//       method: "POST", // *GET, POST, PUT, DELETE, etc.
+//       headers: {"Content-Type": "application/json",}
+//     });
+//     const json = await response.json();
+    // console.log("json.link");
+    // if ($('#shouts').length == 0){
+    //   $('#shouts').append('<tbody></tbody>');
+    //   }
       // json.rows.forEach( shout => {
       // $('#shouts').append(`<tr> 
       // <td>${shout.link}</td>
@@ -173,9 +172,9 @@ async function getAdminData() {
       // <td><button id="${shout.rowid}" onClick="delete_row(this.id)" class="btn btn-primary">Löschen</button></td>
       // </tr>`);
       //})
- 
-}
+//}
 
+// Delete Butten
 async function delete_row(clicked_id)
 {
   var data = { "rowid": clicked_id};
@@ -185,20 +184,73 @@ async function delete_row(clicked_id)
     body: JSON.stringify(data),
   });
   await response.json();
-  console.log("link mit id = " + clicked_id + "wurde entfernt!");
-  location.reload();
+  gettabl_data(1);
 }
 
-async function save_row(clicked_id)
-{
-  console.log("193 " + clicked_id );
+// Veröffentlichen Button
+async function save_row(clicked_id){
   var data = { "rowid": clicked_id};
   const response = await fetch("/saveRow", {
     method: "POST", // *GET, POST, PUT, DELETE, etc.
     headers: {"Content-Type": "application/json",},
     body: JSON.stringify(data),
   });
- 
-  console.log("link mit id = " + clicked_id + "wurde auf 0 gesetzt!");
-  location.reload();
+  gettabl_data(0);
+}
+
+async function gettabl_data(para){
+  var data = { "para": para };
+  
+  try {
+    const response = await fetch('/adminTable', {
+      method: "POST",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    const rowsJSON = await response.json();
+    
+    $("#shouts").html(''); // remove previous rows from table
+    
+    let rowString = `<tr>
+    <th>Link</th>
+    <th>Kategorie</th>
+    <th>Automarke</th>
+    <th>Model</th>
+    <th>Veröffentlichen</th>
+    <th>Löschen</th>
+    </tr>`;
+
+    let rowpublicString = `<tr>
+    <th>Link</th>
+    <th>Kategorie</th>
+    <th>Automarke</th>
+    <th>Model</th>
+    <th>Test</th>
+    <th>Löschen</th>
+    </tr>`;
+    if (para = 1){
+    $("#shouts").append(rowString);
+    }
+    else if ( para = 0){
+    $("#shouts").append(rowpublicString);
+    }
+  
+    rowsJSON.forEach(row => {
+      rowString = `<tr><td><a href=${row.link} style=\"display:block;margin:0px;width:100%;height:100%;\">                   ${row.link }<\/a><\/td> 
+                  <td>${row.category} <\/td>
+                  <td>${row.carbrand} <\/td>
+                  <td>${row.model} <\/td>
+                  <td><button id=\"${row.rowid}\" onClick=\"save_row(this.id)\" class=\"btn btn-primary\">Ver\u00F6ffentlichen<\/button><\/td>
+                  <td><button id=\"${row.rowid}\" onClick=\"delete_row(this.id)\" class=\"btn btn-primary\">L\u00F6schen<\/button><\/td>
+                  <\/tr>`;
+                  if (para = 1){
+                    $("#shouts").append(rowString);
+                    }
+                    else if ( para = 0){
+                    $("#shouts").append(rowpublicString);
+                    }
+    });
+  } catch (err) {
+    console.log(err.name + ": " + err.message);
+  }
 }
