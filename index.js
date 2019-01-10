@@ -85,6 +85,19 @@ app.post('/models', async (req, res) => {
   });
 });
 
+// Post for categorys
+
+app.post('/categorys', async (req, res) => {
+  db.all("SELECT DISTINCT category FROM links WHERE carbrand = ? AND model = ?;", [req.body.carbrand, req.body.model], (err, rows) => {
+    if(err){
+      console.log("Couldn't select categorys from database!");
+    }
+    console.log("Got categorys from database.");
+    rows.forEach( row => console.log(row.category));
+    res.json(rows);
+  });
+});
+
 
 // Providing path for choosen carbrand and model
 
@@ -132,6 +145,19 @@ module.exports = server
 
 
 // ******************************************************  ADMIN
+//Insert Suggested Links
+app.post("/suggest", async (req, res) => {
+  console.log("New Link Suggestion");
+  db.run("INSERT INTO links(carbrand, model, category, link, approved) VALUES (?, ?, ?, ?, ?);", 
+  [req.body.carbrand, req.body.model, req.body.category, req.body.link, "0"], function(err) {
+    if(err) {
+      console.log("suggestion error");
+    } else {
+      console.log("suggestion successful")
+    }
+  });
+});
+
 // Passwort request
 app.post('/login', async (req, res) => {
   //get Login_Link from Database and give it back with respons
@@ -154,6 +180,7 @@ app.post('/login', async (req, res) => {
 //     res.json({"rows": rows });
 //   });
 // });
+
 
 // Delete Admin,
 app.post('/deleteRow', async (req, res) => {

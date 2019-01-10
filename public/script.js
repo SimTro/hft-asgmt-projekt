@@ -2,6 +2,8 @@
 
 let carbrands = null;
 let models = null;
+let categorys = null;
+let link = null;
 let usernames = null;
 let passworts = null;
 var admin_link= null;
@@ -16,6 +18,8 @@ $(document).ready((() => {
 
   carbrands = $('#select_carbrand'); // carbrand dropdown
   models = $('#select_model'); // model dropdown
+  categorys = $('#select_category');
+  link = $("#link_suggestion");
 
   // get carbrands and add them to dropdown menu
   
@@ -28,6 +32,13 @@ $(document).ready((() => {
     showModels( carbrands.find(":selected").text() );
   });
 
+  // listen for change in Model dropdown and show category for selected carbrand/model
+
+  $('#select_model').on('change', async (event) => {
+    event.preventDefault();
+    showCategorys(carbrands.find(":selected").text(), models.find(":selected").text());
+  });
+
   // listen for submit event on form (when button is pressed)
 
   $('#form_search').on('submit', async (event) => {
@@ -35,7 +46,15 @@ $(document).ready((() => {
     await getCarScene(carbrands.find(":selected").text(), models.find(":selected").text());
   })
 
-  // Admin loggin
+ 
+  //Suggest Link Form
+
+  $("#form_suggest").on("submit", async (event) => {
+    event.preventDefault();
+    await suggestLink(carbrands.find(":selected").text(), models.find(":selected").text(), categorys.find(":selected").text(), link.val() );
+  })
+  
+ // Admin loggin
   $('#form_login').on('submit', async (event) => {
     event.preventDefault();
     var usernames = document.querySelector("#loginname").value; 
@@ -102,6 +121,48 @@ async function showModels(carbrand) {
   }
 }
 
+async function showCategorys(carbrand, model) {
+  console.log("Sending carbrand (" + carbrand + ") and model (" + model + ") to server to get models...")
+  
+  var data = { "carbrand": carbrand, "model": model };
+  
+  try {
+    const response = await fetch('/categorys', {
+      method: "POST",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    const categoryJSON = await response.json();
+    
+    console.log("I (hopefully) got the following categorys: ");
+    
+    categorys.empty(); // remove previous categorys from dropdown 
+
+    categoryJSON.forEach(row => {
+      console.log(row.category);
+      
+      var option = document.createElement('option');
+      option.text = row.category;
+      categorys.append(option);
+    })
+  } catch (err) {
+    console.log(err.name + ": " + err.message);
+  }
+}
+
+//suggest function
+
+async function suggestLink(carbrand, model, category, link) {
+  var data = {"carbrand" : carbrand, "model" : model, "category" : category, "link" : link};
+  console.log("Brand: " + carbrand + " model: " + model + " category: " + category + link);
+
+  const response = await fetch("/suggest", {
+    method: "POST",
+    headers: { 'Content-Type': 'application/json'},
+    body: JSON.stringify(data)
+  });
+
+}
 
 async function getCarScene(carbrand, model) {
   var data = { "carbrand": carbrand, "model": model };
