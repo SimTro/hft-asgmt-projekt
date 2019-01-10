@@ -4,7 +4,6 @@ let carbrands = null;
 let models = null;
 let usernames = null;
 let passworts = null;
-let logid = null;
 
 
 //// as soon as DOM (Document Object Model) is loaded, do this:
@@ -135,8 +134,6 @@ async function getCarScene(carbrand, model) {
 // passwort sending and anser
 async function getLogin(username, passwort) {
 
-  console.log("I (hopefully) got the following Passwort: ");
-
   var data = { "username": username, "passwort": passwort};
 
   const response = await fetch("/login", {
@@ -147,20 +144,16 @@ async function getLogin(username, passwort) {
     body: JSON.stringify(data),
   });
   const rowJSON = await response.json();
-  
   const rowJSONlink = rowJSON.row.link;
-  console.log(rowJSONlink);
   if(rowJSONlink == undefined) return;
   
   window.location = rowJSONlink; 
 
-  //getAdminData();
+ 
  
 }
-
+// Daten für die Admin Tabelle aus db in Tabelle
 async function getAdminData() {
-  console.log("Database 177")
-  
     const response = await fetch("/admindata", {
       method: "POST", // *GET, POST, PUT, DELETE, etc.
       headers: {"Content-Type": "application/json",}
@@ -171,15 +164,20 @@ async function getAdminData() {
     if ($('#shouts').length == 0){
       $('#shouts').append('<tbody></tbody>');
       }
-      json.rows.forEach( shout => {
-      $('#shouts').append(`<tr> <td>${shout.link}</td><td>${shout.category}</td><td>${shout.model}</td> <td><button id="${shout.rowid}" onClick="delete_row(this.id)" class="btn btn-primary">Löschen</button></td></tr>`);
-      })
+      // json.rows.forEach( shout => {
+      // $('#shouts').append(`<tr> 
+      // <td>${shout.link}</td>
+      // <td>${shout.category}</td>
+      // <td>${shout.model}</td>
+      // <td>${shout.model}</td>
+      // <td><button id="${shout.rowid}" onClick="delete_row(this.id)" class="btn btn-primary">Löschen</button></td>
+      // </tr>`);
+      //})
  
 }
 
 async function delete_row(clicked_id)
 {
-  console.log("Hallo")
   var data = { "rowid": clicked_id};
   const response = await fetch("/deleteRow", {
     method: "POST", // *GET, POST, PUT, DELETE, etc.
@@ -188,5 +186,19 @@ async function delete_row(clicked_id)
   });
   await response.json();
   console.log("link mit id = " + clicked_id + "wurde entfernt!");
+  location.reload();
+}
+
+async function save_row(clicked_id)
+{
+  console.log("193 " + clicked_id );
+  var data = { "rowid": clicked_id};
+  const response = await fetch("/saveRow", {
+    method: "POST", // *GET, POST, PUT, DELETE, etc.
+    headers: {"Content-Type": "application/json",},
+    body: JSON.stringify(data),
+  });
+ 
+  console.log("link mit id = " + clicked_id + "wurde auf 0 gesetzt!");
   location.reload();
 }

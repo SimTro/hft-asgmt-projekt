@@ -19,6 +19,11 @@
     <%- include('../partials/nav', { active: 'index' }) %>
     <div class="container">
       
+
+      <div class="header" id="myHeader">
+        <h2>My Header</h2>
+      </div> 
+      
       <br>
       
       <div class="row justify-content-center">
@@ -35,13 +40,16 @@
           <th>Kategorie</th>
           <th>Automarke</th>
           <th>Model</th>
-          <th>Öffentlich</th>
+          <th>Veröffentlichen</th>
+          <th>Löschen</th>
         </tr>
         <% myRows.forEach( row => { %>
           <tr> 
             <td><%= row.link %></td>
             <td><%= row.category %></td>
+            <td><%= row.carbrand %></td>
             <td><%= row.model %></td>
+            <td><button id="<%= row.rowid %>" onClick="save_row(this.id)" class="btn btn-primary">Veröffentlichen</button></td>
             <td><button id="<%= row.rowid %>" onClick="delete_row(this.id)" class="btn btn-primary">Löschen</button></td>
           </tr>
         <% }); %>

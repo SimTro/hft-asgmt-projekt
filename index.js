@@ -41,6 +41,7 @@ app.get('/impressum', async (req, res) => {
 });
 
 app.get('/adminz3erhzwtfnwg74fzw3gjwzdgwjehfzg', async (req, res) => {
+  
   db.all("SELECT rowid, * FROM links WHERE approved = 1;", (err, rows) => {
     if (err) {
       throw err;
@@ -131,19 +132,18 @@ app.post('/login', async (req, res) => {
   });
 });
 
-
+// Daten für Admin TAbelle
 app.post('/admindata', async (req, res) => {
   db.all("SELECT rowid, * FROM links WHERE approved = 1;", (err, rows) => {
     if (err) {
       throw err;
     }
-    console.log(rows);
+    
     res.json({"rows": rows });
   });
 });
-
+// Delete Admin,
 app.post('/deleteRow', async (req, res) => {
-  console.log(req.body.rowid)
   db.run("DELETE FROM links WHERE rowid=?;", [req.body.rowid], (err, rows) => {
     if (err) {
       throw err;
@@ -151,3 +151,16 @@ app.post('/deleteRow', async (req, res) => {
     res.json({"Done": rows});
   });
 });
+
+// publish Admin
+app.post('/saveRow', function(req, res){
+  console.log("set to 0")
+  db.run("UPDATE links SET approved = 0 WHERE rowid=?;", [req.body.rowid], function(err, row){
+    if (err){
+        console.err(err);
+        res.status(500);
+}
+res.end();
+});
+});
+ 
