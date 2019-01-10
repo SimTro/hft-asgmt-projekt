@@ -78,7 +78,7 @@ app.post('/models', async (req, res) => {
 // Post for categorys
 
 app.post('/categorys', async (req, res) => {
-  db.all("SELECT category FROM links WHERE carbrand = ? AND model = ?;", [req.body.carbrand, req.body.model], (err, rows) => {
+  db.all("SELECT DISTINCT category FROM links WHERE carbrand = ? AND model = ?;", [req.body.carbrand, req.body.model], (err, rows) => {
     if(err){
       console.log("Couldn't select categorys from database!");
     }
