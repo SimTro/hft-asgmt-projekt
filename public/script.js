@@ -53,7 +53,7 @@ $(document).ready((() => {
     event.preventDefault();
     await suggestLink(carbrands.find(":selected").text(), models.find(":selected").text(), categorys.find(":selected").text(), link.val() );
   })
-  
+
  // Admin loggin
   $('#form_login').on('submit', async (event) => {
     event.preventDefault();
@@ -277,7 +277,6 @@ async function gettabl_data(para){
     <th>Kategorie</th>
     <th>Automarke</th>
     <th>Model</th>
-    <th>Veröffentlichen</th>
     <th>Löschen</th>
     </tr>`;
 
@@ -286,13 +285,13 @@ async function gettabl_data(para){
     <th>Kategorie</th>
     <th>Automarke</th>
     <th>Model</th>
-    <th>Test</th>
+    <th>Veröffentlichen</th>
     <th>Löschen</th>
     </tr>`;
-    if (para = 1){
+    if (para == 1){
     $("#shouts").append(rowString);
     }
-    else if ( para = 0){
+    else if ( para == 0){
     $("#shouts").append(rowpublicString);
     }
   
@@ -301,13 +300,21 @@ async function gettabl_data(para){
                   <td>${row.category} <\/td>
                   <td>${row.carbrand} <\/td>
                   <td>${row.model} <\/td>
+                  <td><button id=\"${row.rowid}\" onClick=\"delete_row(this.id)\" class=\"btn btn-primary\">L\u00F6schen<\/button><\/td>
+                  <\/tr>`;
+
+                  rowpublicString = `<tr><td><a href=${row.link} style=\"display:block;margin:0px;width:100%;height:100%;\">                   ${row.link }<\/a><\/td> 
+                  <td>${row.category} <\/td>
+                  <td>${row.carbrand} <\/td>
+                  <td>${row.model} <\/td>
                   <td><button id=\"${row.rowid}\" onClick=\"save_row(this.id)\" class=\"btn btn-primary\">Ver\u00F6ffentlichen<\/button><\/td>
                   <td><button id=\"${row.rowid}\" onClick=\"delete_row(this.id)\" class=\"btn btn-primary\">L\u00F6schen<\/button><\/td>
                   <\/tr>`;
-                  if (para = 1){
+
+                  if (para == 1){
                     $("#shouts").append(rowString);
                     }
-                    else if ( para = 0){
+                    else if ( para == 0){
                     $("#shouts").append(rowpublicString);
                     }
     });
