@@ -41,14 +41,7 @@ app.get('/impressum', async (req, res) => {
 });
 
 app.get('/adminz3erhzwtfnwg74fzw3gjwzdgwjehfzg', async (req, res) => {
-  db.all("SELECT rowid, * FROM links WHERE approved = 0;",(err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.render('pages/admin',{
-      myRows: rows
-    });
-  });
+    res.render('pages/admin');
 });
 
 app.post('/adminTable', async (req, res) => {
