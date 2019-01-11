@@ -107,15 +107,17 @@ app.post('/carScene', async (req, res) => {
     if (err) {
       throw err;
     }
-    console.log("carScene path: " + row.path);
-    res.json({ "path": row.path });
+    const pathWithParam = '/car_scenes/car_scene_iframe?scene=' + row.path + '&model=' + req.body.model + '&carbrand=' + req.body.carbrand;
+    console.log("carScene path: " + pathWithParam);
+    res.json({ "path": pathWithParam });
   });
 });
 
 // GET-Routes for carScenes
 
-app.get('/car_scenes/car_scene_TEST_01', async (req, res) => {
-  db.all("SELECT link,category FROM links WHERE model=? AND carbrand=? AND approved=1 ORDER BY link", ["Mini", "Rover"], (err, rows) => {
+app.get('/car_scenes/car_scene_iframe', async (req, res) => {
+  console.log("scene=" + req.query.scene);
+  db.all("SELECT link,category FROM links WHERE model=? AND carbrand=? AND approved=1 ORDER BY link", [req.query.model, req.query.carbrand], (err, rows) => {
     if(err){
       console.log("Couldn't select links from database!");
       console.log(err);
@@ -124,7 +126,7 @@ app.get('/car_scenes/car_scene_TEST_01', async (req, res) => {
     console.log("I got the following links: ");
     rows.forEach( row => console.log(row.link));
     console.log("Got links from database.");
-    res.render("./car_scenes/car_scene_TEST_01",{
+    res.render("." + req.query.scene,{
       links_Motor: rows.filter( row => row.category == "Motor"),
       links_Rad: rows.filter( row => row.category == "Rad"),
       links_Lampe: rows.filter( row => row.category == "Lampe"),
