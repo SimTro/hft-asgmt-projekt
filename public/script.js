@@ -11,7 +11,6 @@ var admin_link= null;
 
 //// as soon as DOM (Document Object Model) is loaded, do this:
 
-
 $(document).ready((() => {
 
   console.log('DOM is ready!')
@@ -24,7 +23,7 @@ $(document).ready((() => {
   // get carbrands and add them to dropdown menu
   
   getData(); 
-  
+
   // listen for change in carbrand dropdown and show models for selected carbrand
 
   $('#select_carbrand').on('change', async (event) => {
@@ -157,6 +156,7 @@ async function suggestLink(carbrand, model, category, link) {
 }
 
 async function getCarScene(carbrand, model) {
+  // add some temporay spaces so that we can already scroll down
   var data = { "carbrand": carbrand, "model": model };
 
   const response = await fetch("/carScene", {
@@ -167,19 +167,22 @@ async function getCarScene(carbrand, model) {
     body: JSON.stringify(data),
   });
   const carSceneJSON = await response.json();
-  
+
   // load scene in iframe 
   // if first time loading show some info about controls
+  $('#info_controls').html("");
   if($('#iframe_scene').attr('src') == ""){
-    $('#iframe_scene').attr('src', carSceneJSON.path); 
+    $('#iframe_scene').attr('src', carSceneJSON.path);
+    $("#myHeading").hide(); 
     $('#info_controls').removeClass('d-none');
-    $('#info_controls').append("<div class=\"row justify-content-center\">&#8592; &#8594; Ansicht mit Pfeiltasten rotieren</div>");
+    $('#info_controls').append("<br><br><div class=\"row justify-content-center\">&#8592; &#8594; Ansicht mit Pfeiltasten rotieren</div>");
     setTimeout(function(){ $('#info_controls').append("<br><br><div class=\"row justify-content-center\">&#9757; &#9757; Doppelklick auf gewünschten Bereich</div>");
-      setTimeout(function(){ $('#info_controls').append("<br><br><div class=\"row justify-content-center\">&#9757; Klick auf Schrift zeigt Auswahl</div>"); 
+      setTimeout(function(){ $('#info_controls').append("<br><br><div class=\"row justify-content-center\">&#9757; Klick auf Schrift zeigt Auswahl</div><br><br>"); 
         setTimeout(function(){ $('#info_controls').addClass('d-none'); $('#info_controls').empty(); $('#iframe_scene').removeClass('d-none'); $('#iframe_scene').focus(); }, 4000);}, 1200);}, 1200);
   } else {
     $('#iframe_scene').attr('src', carSceneJSON.path);
     $('#iframe_scene').removeClass('d-none');
+    $('#iframe_scene').focus();
   }
 }
 
