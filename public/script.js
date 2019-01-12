@@ -20,7 +20,7 @@ $(document).ready((() => {
   models = $('#select_model'); // model dropdown
   categorys = $('#select_category');
   link = $("#link_suggestion");
-
+  adminCarbrands  =$('#select_carbrand');
   // get carbrands and add them to dropdown menu
   
   getData(); 
@@ -54,15 +54,7 @@ $(document).ready((() => {
     await suggestLink(carbrands.find(":selected").text(), models.find(":selected").text(), categorys.find(":selected").text(), link.val() );
   })
 
- // Admin loggin
-  $('#form_login').on('submit', async (event) => {
-    event.preventDefault();
-    var usernames = document.querySelector("#loginname").value; 
-    var passworts = document.querySelector("#password").value;
-   
-    await getLogin(usernames,passworts);
-  })
-}))
+
 
 
 //// functions are definded below this line
@@ -192,6 +184,17 @@ async function getCarScene(carbrand, model) {
 }
 
 //////////// ********************************************** ADMIN ***********************************
+
+ // Admin loggin
+ $('#form_login').on('submit', async (event) => {
+  event.preventDefault();
+  var usernames = document.querySelector("#loginname").value; 
+  var passworts = document.querySelector("#password").value;
+ 
+  await getLogin(usernames,passworts);
+})
+}))
+
 // passwort sending and anser
 async function getLogin(username, passwort) {
 
@@ -213,30 +216,10 @@ async function getLogin(username, passwort) {
   window.location = rowJSONlink; 
   console.log("153 " + admin_link);
 }
-// Daten für die Admin Tabelle aus db in Tabelle
-// async function getAdminData() {
-//     const response = await fetch("/admindata", {
-//       method: "POST", // *GET, POST, PUT, DELETE, etc.
-//       headers: {"Content-Type": "application/json",}
-//     });
-//     const json = await response.json();
-    // console.log("json.link");
-    // if ($('#shouts').length == 0){
-    //   $('#shouts').append('<tbody></tbody>');
-    //   }
-      // json.rows.forEach( shout => {
-      // $('#shouts').append(`<tr> 
-      // <td>${shout.link}</td>
-      // <td>${shout.category}</td>
-      // <td>${shout.model}</td>
-      // <td>${shout.model}</td>
-      // <td><button id="${shout.rowid}" onClick="delete_row(this.id)" class="btn btn-primary">Löschen</button></td>
-      // </tr>`);
-      //})
-//}
+
 
 // Delete Butten
-async function delete_row(clicked_id)
+async function delete_row(clicked_id , para)
 {
   var data = { "rowid": clicked_id};
   const response = await fetch("/deleteRow", {
@@ -245,7 +228,8 @@ async function delete_row(clicked_id)
     body: JSON.stringify(data),
   });
   await response.json();
-  gettabl_data(1);
+
+  gettabl_data(para);
 }
 
 // Veröffentlichen Button
@@ -258,7 +242,7 @@ async function save_row(clicked_id){
   });
   gettabl_data(0);
 }
-
+// ******   Katergorriene 
 async function gettabl_data(para){
   var data = { "para": para };
   
@@ -272,7 +256,8 @@ async function gettabl_data(para){
     
     $("#shouts").html(''); // remove previous rows from table
     
-    let rowString = `<tr>
+    let rowString = 
+    `<tr>
     <th>Link</th>
     <th>Kategorie</th>
     <th>Automarke</th>
@@ -300,7 +285,7 @@ async function gettabl_data(para){
                   <td>${row.category} <\/td>
                   <td>${row.carbrand} <\/td>
                   <td>${row.model} <\/td>
-                  <td><button id=\"${row.rowid}\" onClick=\"delete_row(this.id)\" class=\"btn btn-primary\">L\u00F6schen<\/button><\/td>
+                  <td><button id=\"${row.rowid}\" onClick=\"delete_row(this.id , 1 )\" class=\"btn btn-primary\">L\u00F6schen<\/button><\/td>
                   <\/tr>`;
 
                   rowpublicString = `<tr><td><a href=${row.link} style=\"display:block;margin:0px;width:100%;height:100%;\">                   ${row.link }<\/a><\/td> 
@@ -308,7 +293,7 @@ async function gettabl_data(para){
                   <td>${row.carbrand} <\/td>
                   <td>${row.model} <\/td>
                   <td><button id=\"${row.rowid}\" onClick=\"save_row(this.id)\" class=\"btn btn-primary\">Ver\u00F6ffentlichen<\/button><\/td>
-                  <td><button id=\"${row.rowid}\" onClick=\"delete_row(this.id)\" class=\"btn btn-primary\">L\u00F6schen<\/button><\/td>
+                  <td><button id=\"${row.rowid}\" onClick=\"delete_row(this.id , 0)\" class=\"btn btn-primary\">L\u00F6schen<\/button><\/td>
                   <\/tr>`;
 
                   if (para == 1){
