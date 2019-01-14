@@ -45,6 +45,8 @@ app.get('/adminz3erhzwtfnwg74fzw3gjwzdgwjehfzg', async (req, res) => {
 });
 
 app.post('/adminTable', async (req, res) => {
+console.log("48");
+  if (req.body.para == 0){
   console.log("Server received para (" + req.body.para + ")");
   db.all("SELECT DISTINCT rowid, * FROM links WHERE approved = ?;", [req.body.para], (err, rows) => {
     if(err){
@@ -53,6 +55,18 @@ app.post('/adminTable', async (req, res) => {
     console.log("Got admin-links from database.");
     res.json(rows);
   });
+  }
+
+  else {
+    console.log("61 Server received para (" + req.body.para + ")" + req.body.carbrand + req.body.model);
+    db.all("SELECT DISTINCT rowid, * FROM links WHERE approved = ? AND carbrand = ? AND model = ?;", [req.body.para,req.body.carbrand,req.body.model], (err, rows) => {
+      if(err){
+        console.log("Couldn't select admin-links from database!");
+      }
+      console.log("Got admin-links from database.");
+      res.json(rows);
+    });
+    }
 });
 
 app.get('/carbrands', (req, res) => {

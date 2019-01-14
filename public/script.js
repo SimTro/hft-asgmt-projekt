@@ -11,7 +11,7 @@ var admin_link= null;
 
 //// as soon as DOM (Document Object Model) is loaded, do this:
 
-$(document).ready((() => {
+$(document).ready(() => {
 
   console.log('DOM is ready!')
 
@@ -19,7 +19,7 @@ $(document).ready((() => {
   models = $('#select_model'); // model dropdown
   categorys = $('#select_category');
   link = $("#link_suggestion");
-  adminCarbrands  =$('#select_carbrand');
+ 
   // get carbrands and add them to dropdown menu
   
   getData(); 
@@ -53,8 +53,19 @@ $(document).ready((() => {
     await suggestLink(carbrands.find(":selected").text(), models.find(":selected").text(), categorys.find(":selected").text(), link.val() );
   })
 
+   // Admin loggin
+ $('#form_login').on('submit', async (event) => {
+  event.preventDefault();
+  var usernames = document.querySelector("#loginname").value; 
+  var passworts = document.querySelector("#password").value;
+  await getLogin(usernames,passworts);
+})
 
-
+$('#admin_form_search').on('submit', async (event) => {
+  event.preventDefault();
+  gettabl_data(1);
+})
+});
 
 //// functions are definded below this line
 
@@ -188,15 +199,8 @@ async function getCarScene(carbrand, model) {
 
 //////////// ********************************************** ADMIN ***********************************
 
- // Admin loggin
- $('#form_login').on('submit', async (event) => {
-  event.preventDefault();
-  var usernames = document.querySelector("#loginname").value; 
-  var passworts = document.querySelector("#password").value;
- 
-  await getLogin(usernames,passworts);
-})
-}))
+
+
 
 // passwort sending and anser
 async function getLogin(username, passwort) {
@@ -247,7 +251,15 @@ async function save_row(clicked_id){
 }
 // ******   Katergorriene 
 async function gettabl_data(para){
-  var data = { "para": para };
+
+  carbrands = $('#select_carbrand'); // carbrand dropdown
+  models = $('#select_model'); // model dropdown
+  carbrand = carbrands.find(":selected").text();
+  model = models.find(":selected").text();
+
+    var data = { "para": para , "carbrand": carbrand, "model": model};
+  
+  
   
   try {
     const response = await fetch('/adminTable', {
@@ -267,6 +279,7 @@ async function gettabl_data(para){
     <th>Model</th>
     <th>Löschen</th>
     </tr>`;
+    
 
     let rowpublicString = `<tr>
     <th>Link</th>
@@ -278,8 +291,10 @@ async function gettabl_data(para){
     </tr>`;
     if (para == 1){
     $("#shouts").append(rowString);
+    $("#admin_form_search").css("display","block")
     }
     else if ( para == 0){
+    $("#admin_form_search").css("display","none")
     $("#shouts").append(rowpublicString);
     }
   
@@ -300,12 +315,15 @@ async function gettabl_data(para){
                   <\/tr>`;
 
                   if (para == 1){
+                    
                     $("#shouts").append(rowString);
                     }
                     else if ( para == 0){
+                     
                     $("#shouts").append(rowpublicString);
                     }
     });
+    
   } catch (err) {
     console.log(err.name + ": " + err.message);
   }
