@@ -95,7 +95,7 @@ app.post('/models', async (req, res) => {
 // Post for categorys
 
 app.post('/categorys', async (req, res) => {
-  db.all("SELECT DISTINCT category FROM links WHERE carbrand = ? AND model = ?;", [req.body.carbrand, req.body.model], (err, rows) => {
+  db.all("SELECT DISTINCT category FROM links;", [req.body.carbrand, req.body.model], (err, rows) => {
     if(err){
       console.log("Couldn't select categorys from database!");
     }
@@ -157,13 +157,14 @@ module.exports = server
 //Insert Suggested Links
 app.post("/suggest", async (req, res) => {
   console.log("New Link Suggestion");
-  db.run("INSERT INTO links(carbrand, model, category, link, approved) VALUES (?, ?, ?, ?, ?);", 
-  [req.body.carbrand, req.body.model, req.body.category, req.body.link, "0"], function(err) {
+  db.run("INSERT INTO links(carbrand, model, category, link, approved) VALUES (?, ?, ?, ?, ?);", [req.body.carbrand, req.body.model, req.body.category, req.body.link, "0"], function(err) {
     if(err) {
       console.log("suggestion error");
     } else {
       console.log("suggestion successful")
     }
+
+    res.end();
   });
 });
 

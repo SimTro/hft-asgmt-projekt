@@ -35,7 +35,7 @@ $(document).ready(() => {
 
   $('#select_model').on('change', async (event) => {
     event.preventDefault();
-    showCategorys(carbrands.find(":selected").text(), models.find(":selected").text());
+    showCategorys();
   });
 
   // listen for submit event on form (when button is pressed)
@@ -43,6 +43,16 @@ $(document).ready(() => {
   $('#form_search').on('submit', async (event) => {
     event.preventDefault();
     await getCarScene(carbrands.find(":selected").text(), models.find(":selected").text());
+  })
+
+  // disable suggest button
+
+  $("#form_suggest").on("keyup", (event) => {
+    if (formElementIsValid(link.val(), 5)) {
+      toggleSuggest(false)
+    } else {
+      toggleSuggest(true)
+    }
   })
 
  
@@ -69,6 +79,14 @@ $('#admin_form_search').on('submit', async (event) => {
 
 //// functions are definded below this line
 
+function toggleSuggest(disable) {
+  const suggestButton = $("#button_suggest")
+  suggestButton.prop("disabled", disable)
+}
+
+function formElementIsValid(element, minLength) {
+  return element.length >= minLength
+}
 
 async function getData() {
   try {
@@ -86,6 +104,7 @@ async function getData() {
       carbrands.append(option);
     });
     showModels( carbrands.find(":selected").text() );
+    showCategorys();
   } catch (err) {
     console.log(err.name + ":" + err.message);
   }
@@ -123,16 +142,14 @@ async function showModels(carbrand) {
   }
 }
 
-async function showCategorys(carbrand, model) {
-  console.log("Sending carbrand (" + carbrand + ") and model (" + model + ") to server to get models...")
-  
-  var data = { "carbrand": carbrand, "model": model };
+async function showCategorys() {
+  console.log(" get models...")
   
   try {
     const response = await fetch('/categorys', {
       method: "POST",
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
+      body: JSON.stringify()
     });
     const categoryJSON = await response.json();
     
@@ -156,14 +173,13 @@ async function showCategorys(carbrand, model) {
 
 async function suggestLink(carbrand, model, category, link) {
   var data = {"carbrand" : carbrand, "model" : model, "category" : category, "link" : link};
-  console.log("Brand: " + carbrand + " model: " + model + " category: " + category + link);
 
   const response = await fetch("/suggest", {
     method: "POST",
     headers: { 'Content-Type': 'application/json'},
     body: JSON.stringify(data)
   });
-
+  alert("Vorschlag wurde eingereicht");
 }
 
 async function getCarScene(carbrand, model) {
