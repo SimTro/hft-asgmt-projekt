@@ -157,13 +157,14 @@ module.exports = server
 //Insert Suggested Links
 app.post("/suggest", async (req, res) => {
   console.log("New Link Suggestion");
-  db.run("INSERT INTO links(carbrand, model, category, link, approved) VALUES (?, ?, ?, ?, ?);", 
-  [req.body.carbrand, req.body.model, req.body.category, req.body.link, "0"], function(err) {
+  db.run("INSERT INTO links(carbrand, model, category, link, approved) VALUES (?, ?, ?, ?, ?);", [req.body.carbrand, req.body.model, req.body.category, req.body.link, "0"], function(err) {
     if(err) {
       console.log("suggestion error");
     } else {
       console.log("suggestion successful")
     }
+
+    res.end();
   });
 });
 

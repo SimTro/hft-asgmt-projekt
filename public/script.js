@@ -45,6 +45,16 @@ $(document).ready(() => {
     await getCarScene(carbrands.find(":selected").text(), models.find(":selected").text());
   })
 
+  // disable suggest button
+
+  $("#form_suggest").on("keyup", (event) => {
+    if (formElementIsValid(link.val(), 5)) {
+      toggleSuggest(false)
+    } else {
+      toggleSuggest(true)
+    }
+  })
+
  
   //Suggest Link Form
 
@@ -69,6 +79,14 @@ $('#admin_form_search').on('submit', async (event) => {
 
 //// functions are definded below this line
 
+function toggleSuggest(disable) {
+  const suggestButton = $("#button_suggest")
+  suggestButton.prop("disabled", disable)
+}
+
+function formElementIsValid(element, minLength) {
+  return element.length >= minLength
+}
 
 async function getData() {
   try {
@@ -155,14 +173,13 @@ async function showCategorys() {
 
 async function suggestLink(carbrand, model, category, link) {
   var data = {"carbrand" : carbrand, "model" : model, "category" : category, "link" : link};
-  console.log("Brand: " + carbrand + " model: " + model + " category: " + category + link);
 
   const response = await fetch("/suggest", {
     method: "POST",
     headers: { 'Content-Type': 'application/json'},
     body: JSON.stringify(data)
   });
-
+  alert("Vorschlag wurde eingereicht");
 }
 
 async function getCarScene(carbrand, model) {
