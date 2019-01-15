@@ -35,7 +35,7 @@ $(document).ready(() => {
 
   $('#select_model').on('change', async (event) => {
     event.preventDefault();
-    showCategorys(carbrands.find(":selected").text(), models.find(":selected").text());
+    showCategorys();
   });
 
   // listen for submit event on form (when button is pressed)
@@ -86,6 +86,7 @@ async function getData() {
       carbrands.append(option);
     });
     showModels( carbrands.find(":selected").text() );
+    showCategorys();
   } catch (err) {
     console.log(err.name + ":" + err.message);
   }
@@ -123,16 +124,14 @@ async function showModels(carbrand) {
   }
 }
 
-async function showCategorys(carbrand, model) {
-  console.log("Sending carbrand (" + carbrand + ") and model (" + model + ") to server to get models...")
-  
-  var data = { "carbrand": carbrand, "model": model };
+async function showCategorys() {
+  console.log(" get models...")
   
   try {
     const response = await fetch('/categorys', {
       method: "POST",
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
+      body: JSON.stringify()
     });
     const categoryJSON = await response.json();
     
