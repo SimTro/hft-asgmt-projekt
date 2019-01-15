@@ -20,6 +20,12 @@ $(document).ready(() => {
   categorys = $('#select_category');
   link = $("#link_suggestion");
  
+  // on resizing, scale iframe
+
+  window.onresize = function(event) {
+    $('#iframe_scene').height($(window).height()/2);
+  };
+
   // get carbrands and add them to dropdown menu
   
   getData(); 
@@ -200,6 +206,7 @@ async function getCarScene(carbrand, model) {
   $('#info_controls').html("");
   if($('#iframe_scene').attr('src') == ""){
     $('#iframe_scene').attr('src', carSceneJSON.path);
+    $('#iframe_scene').height($(window).height()/2);
     $("#myHeading").hide(); 
     $('#info_controls').removeClass('d-none');
     $('#info_controls').append("<br><br><div class=\"row justify-content-center\">&#8592; &#8594; Ansicht mit Pfeiltasten rotieren</div>");
