@@ -142,6 +142,29 @@ app.get('/car_scenes/car_scene_iframe', async (req, res) => {
   });
 });
 
+app.post('/carScene_mobile_data', async (req, res) => {
+  //get Scene Link from Database and give it back with response
+  db.all("SELECT link,category FROM links WHERE model=? AND carbrand=? AND approved=1 ORDER BY category,link", [req.body.model, req.body.carbrand], (err, rows) => {
+    if(err){
+      console.log("Couldn't select links from database!");
+      console.log(err);
+      return;
+    }
+    db.all("SELECT DISTINCT category FROM links ORDER BY category", (err, categories) => {
+      if(err){
+        console.log("Couldn't select links from database!");
+        console.log(err);
+        return;
+      }
+      console.log("I got the following links: ");
+      rows.forEach( row => console.log(row.link));
+      res.json({
+        "rows": rows,
+        "categories": categories
+      });
+    });
+  });
+});
 
 // Let app listen to choosen port
 // -> so we can send requests to it, using this port
